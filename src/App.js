@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Route } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Route} from 'react-router-dom';
+import {ProductContext} from "./contexts/ProductContext";
+import {CartContext} from "./contexts/CartContext";
 import data from './data';
 
 // Components
@@ -8,35 +10,28 @@ import Products from './components/Products';
 import ShoppingCart from './components/ShoppingCart';
 
 function App() {
-	const [products] = useState(data);
-	const [cart, setCart] = useState([]);
+    const [products] = useState(data);
 
-	const addItem = item => {
-		setCart([...cart, item]);
-	};
+    const [cart, setCart] = useState([]);
 
-	return (
-		<div className="App">
-			<Navigation cart={cart} />
+    const addItem = item => {
+        setCart([...cart, item]);
+    };
+    return (
+        <ProductContext.Provider value={{products, addItem}}>
+            <CartContext.Provider value={cart}>
+                <div className="App">
+                    <Navigation cart={cart}/>
 
-			{/* Routes */}
-			<Route
-				exact
-				path="/"
-				render={() => (
-					<Products
-						products={products}
-						addItem={addItem}
-					/>
-				)}
-			/>
+                    {/* Routes */}
+                    <Route exact path="/" component={Products}/>
 
-			<Route
-				path="/cart"
-				render={() => <ShoppingCart cart={cart} />}
-			/>
-		</div>
-	);
+                    <Route path="/cart" component={ShoppingCart}/>
+                </div>
+            </CartContext.Provider>
+        </ProductContext.Provider>
+    );
 }
 
 export default App;
+
